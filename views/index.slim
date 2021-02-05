@@ -1,0 +1,28 @@
+
+- if session[:id] == nil
+
+    h1 Välkommen till den topphemliga försäljningssida 
+    h2 Denna hemsida är topphemlig, för att komma vidare behöver du skriva både din email och lösenord för att komma vidare. Om du inte redan har ett konto behöver du skaffa dig ett på något sätt...
+
+    form action = "/login" method = "post"
+        input type = "text" name = "login_mail" placeholder = "Mail"
+        input type = "password" name = "login_password" placeholder = "Password"
+        input type = "submit" value = "Login"
+
+- else
+
+    h1 Homescreen
+
+    h2 Olika Säkerhetsklassen
+
+    h3 Omega-Säkerhetsklass
+    nav
+        a href = "/genres/omega" Omega
+
+    h3 Alpha-Säkerhetsklass
+    nav
+        a href = "/genres/alpha" Alpha
+
+    h3 Beta-Säkerhetsklass
+    nav
+        a href = "/genres/beta" Beta
