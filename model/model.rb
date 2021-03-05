@@ -16,7 +16,7 @@ module Model
 
         db.execute("SELECT * FROM users WHERE mail=?", [login_mail]).first
     end
-    # Attempts to recieve all information from all users
+    #Försöker få info från alla användare
     def get_all_info_from_user()
 
         db = connect_to_db("db/db.db")
