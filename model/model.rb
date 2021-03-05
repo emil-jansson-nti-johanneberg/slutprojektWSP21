@@ -14,7 +14,7 @@ module Model
 
         db = connect_to_db("db/db.db")
 
-        db.execute("SELECT * FROM users WHERE mail=?", [login_mail]).first
+        db.execute("SELECT * FROM users WHERE mail = ?",login_mail).first
     end
     #Försöker få info från alla användare
     def get_all_info_from_user()
@@ -33,3 +33,23 @@ module Model
     end
 
 end
+
+def create_user(name, password_digest, rank, security, mail)
+
+    db = connect_to_db("db/db.db")
+
+    db.execute("INSERT INTO users (name, password, rank, security_level, mail) VALUES (?,?,?,?,?)", name, password_digest, rank, security, mail)
+
+end
+
+def delete_user(id)
+
+    db = connect_to_db("db/db.db")
+
+    db.execute("DELETE FROM ads WHERE user_id = ?", id)
+    
+    db.execute("DELETE FROM users WHERE id = ?", id)
+
+end
+
+
