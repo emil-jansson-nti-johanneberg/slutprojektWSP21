@@ -114,3 +114,19 @@ post("/delete_user/:id/delete") do
     delete_user(id)
     redirect("/users/new")
 end
+
+get("/post/new") do
+    slim(:"/post/new")
+end
+
+post("/post/new_post") do
+    title = params[:title]
+    text = params[:text]
+    genre = params[:genre]
+    id = session[:id]
+    date_added = Time.now.strftime("%d/%m/%Y %H:%M")
+
+    create_post(title, text, genre, id, date_added)
+
+    redirect("/post/new")
+end

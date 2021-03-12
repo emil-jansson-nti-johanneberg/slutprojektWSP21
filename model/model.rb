@@ -52,4 +52,11 @@ def delete_user(id)
 
 end
 
+def create_post(title, text, genre, id, date_added)
+
+    db = connect_to_db("db/db.db")
+
+    db.execute("INSERT INTO ads (title, text, genre, user_id, date_added) VALUES (?,?,?,?,?)", title, text, genre, id, date_added)
+
+end
 
