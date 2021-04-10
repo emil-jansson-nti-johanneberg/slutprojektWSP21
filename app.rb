@@ -2,13 +2,13 @@ require'slim'
 require 'sinatra'
 require 'sqlite3'
 require 'bcrypt'
-require 'byebug'
 
 require_relative 'model/model.rb'
 
 enable :sessions 
 
 include Model
+
 
 #VIKTIG! Om personen inte är inloggad vid varje route-change så skickas man tillbaka till "startsidan"
 before do 
@@ -78,11 +78,6 @@ end
         redirect("/error")
     end
 end
-#Route som används för att logga ut
-get("/logout") do
-    session[:id] = nil
-    redirect("/")
-end
 
 get("/users/new") do
 
@@ -90,7 +85,7 @@ get("/users/new") do
         result = get_all_info_from_user()
         slim(:"/users/new",locals:{users:result})
     else
-        set_error("Du kunde inte komma in hit då du inte har rättigheterna att skapa en ny användare. Bara Admins kan skapa ny användare")
+        set_error("You couldn't enter this site because you're not an admin")
         redirect("/error")
     end
 
@@ -124,9 +119,50 @@ post("/post/new_post") do
     text = params[:text]
     genre = params[:genre]
     id = session[:id]
-    date_added = Time.now.strftime("%d/%m/%Y %H:%M")
 
-    create_post(title, text, genre, id, date_added)
+    create_post(title, text, genre, id)
 
     redirect("/post/new")
+end
+
+get("/genres/:genre") do |genre| 
+
+    result = genre_info(genre) 
+    if result.length == 0
+        set_error("Genre not found")
+        redirect("/error")
+    end
+
+    if session[:security] <= result[0]["security"]
+        slim(:"/genres/show",locals:{posts:result})
+    else
+        set_error("För låg säkerhetsnivå för att titta på dessa annonser")
+        redirect("/error")
+    end
+end
+
+post("/upvote") do
+    user_id = session[:id]
+    post_id = params["post_id"]
+    upvote(user_id, post_id)
+
+    redirect("/")
+end
+
+post("/delete_post/:id/delete") do
+    id = params[:id].to_i
+    result = delete_post(id)
+    redirect("/")
+end
+
+post("/update_post/:id/update") do
+    id = params[:id].to_i
+    text = params["content"]
+    result = update_post(text, id)
+    redirect("/")
+end  
+
+get("/logout") do
+    session[:id] = nil
+    redirect("/")
 end

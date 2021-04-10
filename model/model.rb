@@ -34,6 +34,7 @@ module Model
 
 end
 
+
 def create_user(name, password_digest, rank, security, mail)
 
     db = connect_to_db("db/db.db")
@@ -52,11 +53,49 @@ def delete_user(id)
 
 end
 
-def create_post(title, text, genre, id, date_added)
 
-    db = connect_to_db("db/db.db")
 
-    db.execute("INSERT INTO ads (title, text, genre, user_id, date_added) VALUES (?,?,?,?,?)", title, text, genre, id, date_added)
+    def genre_info(genre)
 
-end
+        db = connect_to_db("db/db.db")
+    
+        db.execute("SELECT posts.title, posts.text, posts.id, posts.upvotes, genre.security, genre.name, users.name AS username, posts.user_id FROM genre LEFT JOIN posts ON genre.id = posts.genre LEFT JOIN users ON posts.user_id = users.id WHERE genre.name = ?", genre)
+    
+    end
 
+    def create_post(title, text, genre, id)
+
+        db = connect_to_db("db/db.db")
+    
+        db.execute("INSERT INTO posts (title, text, genre, user_id) VALUES (?,?,?,?)", title, text, genre, id)
+    
+    end
+    
+    def delete_post(id)
+    
+        db = connect_to_db("db/db.db")
+    
+        db.execute("DELETE FROM posts WHERE id = ?", id)
+    
+    end
+    
+    def update_post(text, id)
+    
+        db = connect_to_db("db/db.db")
+    
+        db.execute("UPDATE posts SET text = ? WHERE id = ?", text, id)
+    
+    end
+    
+    def upvote(user_id, post_id)
+    
+        db = connect_to_db("db/db.db")
+    
+        result = db.execute("SELECT * FROM upvote WHERE user_id =? AND post_id =?", user_id, post_id)
+    
+        if result.length == 0
+            db.execute("INSERT INTO upvote (user_id, post_id) VALUES (?,?)", user_id, post_id)
+            db.execute("UPDATE posts SET upvotes = upvotes + 1 WHERE id = ?", post_id)
+    
+        end
+    end

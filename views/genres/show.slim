@@ -1,0 +1,17 @@
+h1 = posts[0]["name"]
+- posts.each do |item|
+    .post
+        h2.post_title = item["title"]
+        p class="post_text" = item["text"]
+        p Säljare
+        p = item["username"]
+        p Antal rekomendantioner från köpare
+        p = item["upvotes"]
+        - if session[:id] == item["user_id"] || session[:security] == 0
+            form action = "/delete_post/#{item["id"]}/delete" method = "post"
+                input type = "submit" value = "Ta bort annons"
+            form action = "/update_post/#{item["id"]}/update" method = "post"
+                textarea name = "content" = item["text"]
+                input type = "submit" value = "Uppdatera annons"
+            form action = "/upvote" method = "post"
+                button type = "submit" value = "#{item["id"]}" name = "post_id" Rekomendera
