@@ -59,7 +59,7 @@ end
 
         db = connect_to_db("db/db.db")
     
-        db.execute("SELECT posts.title, posts.text, posts.id, posts.upvotes, genre.security, genre.name, users.name AS username, posts.user_id FROM genre LEFT JOIN posts ON genre.id = posts.genre LEFT JOIN users ON posts.user_id = users.id WHERE genre.name = ?", genre)
+        db.execute("SELECT COUNT(sale.id) as sales, posts.title, posts.text, posts.id, genre.security, genre.name, users.name AS username, posts.user_id FROM genre LEFT JOIN posts ON genre.id = posts.genre LEFT JOIN users ON posts.user_id = users.id LEFT JOIN sale ON posts.id = sale.post_id WHERE genre.name = ? GROUP BY posts.id", genre) 
     
     end
 
@@ -87,15 +87,13 @@ end
     
     end
     
-    def upvote(user_id, post_id)
+    def sale(user_id, post_id)
     
         db = connect_to_db("db/db.db")
     
-        result = db.execute("SELECT * FROM upvote WHERE user_id =? AND post_id =?", user_id, post_id)
+        result = db.execute("SELECT * FROM sale WHERE user_id =? AND post_id =?", user_id, post_id)
     
-        if result.length == 0
-            db.execute("INSERT INTO upvote (user_id, post_id) VALUES (?,?)", user_id, post_id)
-            db.execute("UPDATE posts SET upvotes = upvotes + 1 WHERE id = ?", post_id)
-    
+        if result.length == 1
+            db.execute("INSERT INTO sale (user_id, post_id) VALUES (?,?)", user_id, post_id)
         end
     end

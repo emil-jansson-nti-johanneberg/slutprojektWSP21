@@ -85,7 +85,7 @@ get("/users/new") do
         result = get_all_info_from_user()
         slim(:"/users/new",locals:{users:result})
     else
-        set_error("You couldn't enter this site because you're not an admin")
+        set_error("Du är inte Admin och kommer därför inte in på denna sida")
         redirect("/error")
     end
 
@@ -119,6 +119,7 @@ post("/post/new_post") do
     text = params[:text]
     genre = params[:genre]
     id = session[:id]
+    password_digest = digest(password)
 
     create_post(title, text, genre, id)
 
@@ -141,11 +142,10 @@ get("/genres/:genre") do |genre|
     end
 end
 
-post("/upvote") do
+post("/sales") do
     user_id = session[:id]
     post_id = params["post_id"]
-    upvote(user_id, post_id)
-
+    sale(user_id, post_id)
     redirect("/")
 end
 
