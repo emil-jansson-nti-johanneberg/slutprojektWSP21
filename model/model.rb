@@ -24,37 +24,6 @@ module Model
         db.execute("SELECT * FROM users")
     end
 
-    def login(password_digest)
-        return BCrypt::Password.new(password_digest)
-    end
-    
-    def digest(password)
-        return BCrypt::Password.create(password)
-    end
-
-end
-
-
-def create_user(name, password_digest, rank, security, mail)
-
-    db = connect_to_db("db/db.db")
-
-    db.execute("INSERT INTO users (name, password, rank, security_level, mail) VALUES (?,?,?,?,?)", name, password_digest, rank, security, mail)
-
-end
-
-def delete_user(id)
-
-    db = connect_to_db("db/db.db")
-
-    db.execute("DELETE FROM ads WHERE user_id = ?", id)
-    
-    db.execute("DELETE FROM users WHERE id = ?", id)
-
-end
-
-
-
     def genre_info(genre)
 
         db = connect_to_db("db/db.db")
@@ -93,7 +62,36 @@ end
     
         result = db.execute("SELECT * FROM sale WHERE user_id =? AND post_id =?", user_id, post_id)
     
-        if result.length == 1
+        if result.length == 0
             db.execute("INSERT INTO sale (user_id, post_id) VALUES (?,?)", user_id, post_id)
+            db.execute("UPDATE posts SET sales = sales + 1 WHERE id = ?", post_id)
         end
     end
+
+    def create_user(name, password_digest, rank, security, mail)
+
+    db = connect_to_db("db/db.db")
+
+    db.execute("INSERT INTO users (name, password, rank, security_level, mail) VALUES (?,?,?,?,?)", name, password_digest, rank, security, mail)
+
+    end
+
+    def delete_user(id)
+
+    db = connect_to_db("db/db.db")
+
+    db.execute("DELETE FROM ads WHERE user_id = ?", id)
+    
+    db.execute("DELETE FROM users WHERE id = ?", id)
+
+    end
+
+    def login(password_digest)
+        return BCrypt::Password.new(password_digest)
+    end
+        
+    def digest(password)
+        return BCrypt::Password.create(password)
+    end
+
+end

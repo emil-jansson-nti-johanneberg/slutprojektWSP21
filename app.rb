@@ -10,29 +10,20 @@ enable :sessions
 include Model
 
 
-#VIKTIG! Om personen inte är inloggad vid varje route-change så skickas man tillbaka till "startsidan"
+# Checks if user is signed in everytime a route change is made and redirects to '/' if not.
 before do 
     if (session[:id] ==  nil) && (request.path_info != '/') && (request.path_info != '/login' && (request.path_info != '/error')) 
       redirect("/")
     end
 end
 
-#Kollar om du gjort ett error
-def set_error(error)
-    session[:error] = error
-end
-
-#Visar error sidan om något går snett
-get("/error") do
-    slim(:error)
-end
-
-# Visar första sidan
-get('/') do
-    slim(:index)
-end
-#Route som används för att logga, anti-hacker skydd dessutom.
-  post("/login") do
+# Attempts a login and updates the session, includes a antihacker system.
+#
+# @param [String] login_mail, The e-mail
+# @param [String] login_password, The password
+#
+# @see Model#login
+post("/login") do
 
     if session[:now]
         time = session[:now].split("_")
@@ -78,7 +69,27 @@ end
         redirect("/error")
     end
 end
+# Checks if user have done an error
+#
+# @param [String] error, the error text the user gets
+def set_error(error)
+    session[:error] = error
+end
+# Displays an error message
+get("/error") do
+    slim(:error)
+end
 
+# Display Landing/Start Page
+#
+get('/') do
+    slim(:index)
+end
+# Route where an admin can create new users and redirects to '/error'
+#
+# @param [String] result, All information from the user which is required
+#
+# @see Model#get_all_info_from_user
 get("/users/new") do
 
     if session[:security] == 0
@@ -91,41 +102,65 @@ get("/users/new") do
 
 end
 
+#This route is used to create a new post
+get("/post/new") do
+    slim(:"/post/new")
+end
+# Creates a new post and redirects to '/post/new'
+#
+# @param [String] title, The title of the post
+# @param [String] text, The content of the post
+# @param [String] genre, The genre of the post
+# @param [Integer] id, The ID of the user
+#
+# @see Model#create_post
+post("/post/new_post") do
+    title = params[:title]
+    text = params[:text]
+    genre = params[:genre]
+    id = session[:id]
+
+    create_post(title, text, genre, id)
+
+    redirect("/post/new")
+end
+# Attempts to create a new user and redirects to '/users/new'
+#
+# @param [String] mail, The e-mail
+# @param [String] name, The name of the user
+# @param [String] rank, The rank
+# @param [Integer] security, The security clearance
+# @param [String] password, The password
+# @param [String] password_digest, The password digested
+#
+# @see Model#digest, Model#create_user
 post("/users/create_user") do
+    mail = params[:mail]
     name = params[:name]
-    password = params[:password]
     rank = params[:rank]
     security = params[:security]
-    mail = params[:mail]
+    password = params[:password]
     password_digest = digest(password)
 
     create_user(name, password_digest, rank, security, mail)
 
     redirect("/users/new")
 end
-
+# Deletes an already exisiting user and then redirects to '/users/create'
+#
+# @param [Integer] id, The ID of the user
+#
+# @see Model#delete_user
 post("/delete_user/:id/delete") do
     id = params[:id].to_i
     delete_user(id)
     redirect("/users/new")
 end
-
-get("/post/new") do
-    slim(:"/post/new")
-end
-
-post("/post/new_post") do
-    title = params[:title]
-    text = params[:text]
-    genre = params[:genre]
-    id = session[:id]
-    password_digest = digest(password)
-
-    create_post(title, text, genre, id)
-
-    redirect("/post/new")
-end
-
+# Attempts to enter a genre
+#
+# @param [String] result, All necessary information about the genre
+#
+# @see Model#genre_info
 get("/genres/:genre") do |genre| 
 
     result = genre_info(genre) 
@@ -141,27 +176,41 @@ get("/genres/:genre") do |genre|
         redirect("/error")
     end
 end
-
+# Attempts to add a sale to a post
+#
+# @param [Integer] user_id, The ID of the user
+# @param [Integer] post_id, The ID of the post
+#
+# @see Model#sale
 post("/sales") do
     user_id = session[:id]
     post_id = params["post_id"]
     sale(user_id, post_id)
     redirect("/")
 end
-
+# Deletes an existing post and redirects to '/'
+#
+# @param [Integer] id, The ID of the post
+#
+# @see Model#delete_post
 post("/delete_post/:id/delete") do
     id = params[:id].to_i
     result = delete_post(id)
     redirect("/")
 end
-
+# Updates an existing post and redirects to '/'
+#
+# @param [Integer] :id, The ID of the post
+# @param [String] content, The new content of the post
+#
+# @see Model#update_post
 post("/update_post/:id/update") do
     id = params[:id].to_i
     text = params["content"]
     result = update_post(text, id)
     redirect("/")
 end  
-
+#This route is used to logout and redirects to '/'
 get("/logout") do
     session[:id] = nil
     redirect("/")

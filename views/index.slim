@@ -1,7 +1,7 @@
 /! Nedanför kollar den om man är inloggad (dvs har en id) och om du inte har det så behöver du logga in, annars kommer du direkt till startsidan.
 - if session[:id] == nil
 
-    h1 Välkommen till den topphemliga försäljningssida 
+    h1 Välkommen till den topphemliga försäljningssida, limiterade prylar säljs till vrakpris. 
     h2 Denna hemsida är topphemlig, för att komma vidare behöver du skriva både din email och lösenord för att komma vidare. Om du inte redan har ett konto behöver du skaffa dig ett på något sätt...
 
     form action = "/login" method = "post"
@@ -14,6 +14,8 @@
     h1 Nedan finner du alla säkerhetsklasser och dess annonser
 
     h2 Olika Säkerhetsklasser
+
+    h4 Pågrund av högt köpttryck har vi på Hidden-Blocket valt att göra så att alla varor max går att köpa en gång
 
     h3 Hög-säkerhetsannonser (Omega)
     nav
