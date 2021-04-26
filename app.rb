@@ -37,22 +37,14 @@ post("/login") do
     login_mail = params["login_mail"]
     login_password = params["login_password"]
 
-    if login_mail == nil
-        set_error("Icke-godkända inloggninsuppgifter")
-        redirect("/error")
-    end
-
     result = get_info_from_mail(login_mail)
-
-
 
     attempts = session[:attempts] 
     if attempts == nil
         attempts = 0
     end
 
-    if  
-        result != nil
+    if  result != nil
         name = result["name"]
         user_id = result["id"]
         security = result["security_level"]
