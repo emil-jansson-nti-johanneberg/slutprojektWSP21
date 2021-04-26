@@ -62,10 +62,9 @@ module Model
     
         result = db.execute("SELECT * FROM sale WHERE user_id =? AND post_id =?", user_id, post_id)
     
-        if result.length == 0
-            db.execute("INSERT INTO sale (user_id, post_id) VALUES (?,?)", user_id, post_id)
-            db.execute("UPDATE posts SET sales = sales + 1 WHERE id = ?", post_id)
-        end
+        db.execute("INSERT INTO sale (user_id, post_id) VALUES (?,?)", user_id, post_id)
+        db.execute("UPDATE posts SET sales = sales + 1 WHERE id = ?", post_id)
+    
     end
 
     def create_user(name, password_digest, rank, security, mail)

@@ -2,6 +2,7 @@ require'slim'
 require 'sinatra'
 require 'sqlite3'
 require 'bcrypt'
+require 'byebug'
 
 require_relative 'model/model.rb'
 
@@ -36,22 +37,31 @@ post("/login") do
     login_mail = params["login_mail"]
     login_password = params["login_password"]
 
-    result = get_info_from_mail(login_mail)
-
     if login_mail == nil
         set_error("Icke-godkända inloggninsuppgifter")
         redirect("/error")
     end
+
+    result = get_info_from_mail(login_mail)
+
+
 
     attempts = session[:attempts] 
     if attempts == nil
         attempts = 0
     end
 
-    name = result["name"]
-    user_id = result["id"]
-    security = result["security_level"]
-    password_digest = result["password"]
+    if  
+        result != nil
+        name = result["name"]
+        user_id = result["id"]
+        security = result["security_level"]
+        password_digest = result["password"]  
+    else
+        set_error("Icke-godkända inloggninsuppgifter")
+        redirect("/error")
+    end
+
     if login(password_digest) == login_password 
         session[:id] = user_id
         session[:name] = name
