@@ -17,7 +17,7 @@ module Model
     end 
     # Attempts to recieve information from a particular mail
     #
-    # @option params [String] mail The e-mail
+    # @option params [String] login_mail The e-mail
     #
     def get_info_from_mail(login_mail)
 
