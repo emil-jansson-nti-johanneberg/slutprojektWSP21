@@ -117,16 +117,15 @@ end
 #
 # @see Model#create_post
 post("/post/new_post") do
-    title = params[:title]
-    text = params[:text]
-    genre = params[:genre]
-    id = session[:id]
 
-    create_post(title, text, genre, id)
-
-    redirect("/post/new")
+        title = params[:title]
+        text = params[:text]
+        genre = params[:genre]
+        id = session[:id]
+        create_post(title, text, genre, id)
+        redirect("/post/new")
 end
-# Attempts to create a new user and redirects to '/users/new'
+# Admin attempts to create a new user and redirects to '/users/new'
 #
 # @param [String] mail, The e-mail
 # @param [String] name, The name of the user
@@ -137,26 +136,28 @@ end
 #
 # @see Model#digest, Model#create_user
 post("/users/create_user") do
-    mail = params[:mail]
-    name = params[:name]
-    rank = params[:rank]
-    security = params[:security]
-    password = params[:password]
-    password_digest = digest(password)
-
-    create_user(name, password_digest, rank, security, mail)
-
-    redirect("/users/new")
+    if session[:security] == 0
+        mail = params[:mail]
+        name = params[:name]
+        rank = params[:rank]
+        security = params[:security]
+        password = params[:password]
+        password_digest = digest(password)
+        create_user(name, password_digest, rank, security, mail)
+        redirect("/users/new")
+    end
 end
-# Deletes an already exisiting user and then redirects to '/users/create'
+# Route where Admin deletes an already exisiting user and then redirects to '/users/create'
 #
 # @param [Integer] id, The ID of the user
 #
 # @see Model#delete_user
 post("/delete_user/:id/delete") do
-    id = params[:id].to_i
-    delete_user(id)
-    redirect("/users/new")
+    if session[:security] == 0
+        id = params[:id].to_i
+        delete_user(id)
+        redirect("/users/new")
+    end
 end
 # Attempts to enter a genre
 #
@@ -195,7 +196,7 @@ end
 # @param [Integer] id, The ID of the post
 #
 # @see Model#delete_post
-post("/delete_post/:id/delete") do
+post("/delete_post/:id/delete") do 
     id = params[:id].to_i
     result = delete_post(id)
     redirect("/")

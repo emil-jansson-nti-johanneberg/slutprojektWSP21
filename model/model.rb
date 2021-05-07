@@ -117,8 +117,8 @@ module Model
     def delete_user(id)
 
         db = connect_to_db("db/db.db")
-
-        db.execute("DELETE FROM ads WHERE user_id = ?", id)
+        
+        db.execute("DELETE FROM sale WHERE user_id = ?", id)
     
         db.execute("DELETE FROM users WHERE id = ?", id)
 
