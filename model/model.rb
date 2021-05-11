@@ -43,6 +43,18 @@ module Model
         db.execute("SELECT COUNT(sale.id) as sales, posts.title, posts.text, posts.id, genre.security, genre.name, users.name AS username, posts.user_id FROM genre LEFT JOIN posts ON genre.id = posts.genre LEFT JOIN users ON posts.user_id = users.id LEFT JOIN sale ON posts.id = sale.post_id WHERE genre.name = ? GROUP BY posts.id", genre) 
     
     end
+    # Gets users post
+    # @param [Integer] user_id Users id
+    # @return [Array] with hashes
+    # * :id [Integer] The ID of the post 
+    # * :post [String] The src to the users photo
+    # * :text [String] The posts text
+    # * :date [String] The posts date
+    def get_all_info_from_post(id)
+        db = connect_to_db("db/db.db")
+        info = db.execute('SELECT * FROM posts WHERE id = ?',id)
+        return info
+    end
     # Attemps to create post
     #
     # @option params [String] title the title
