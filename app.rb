@@ -205,6 +205,9 @@ post("/delete_post/:id/delete") do
     if  user_id == info[0]["user_id"]
         result = delete_post(id)
         redirect("/")
+    elsif session[:security] == 0
+        result = delete_post(id)
+        redirect("/")
     else
         set_error("Du måste vara admin eller säljaren för att kunna ta bort inlägget")
         redirect("/error")
@@ -226,6 +229,9 @@ post("/update_post/:id/update") do
     info = get_all_info_from_post(id)
     text = params["content"]
     if session[:security] == 0 && user_id == info[0]["user_id"]
+        result = update_post(text, id)
+        redirect("/")
+    elsif
         result = update_post(text, id)
         redirect("/")
     else
