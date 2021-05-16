@@ -195,7 +195,6 @@ end
 # @param [Integer] id, The ID of the post
 # @param [Integer] user_id, The ID of the user
 # @see Model#get_all_info_from_post
-# @param [Array] info, All information from the post 
 #
 # @see Model#delete_post
 post("/delete_post/:id/delete") do 
@@ -228,10 +227,10 @@ post("/update_post/:id/update") do
     user_id = session[:id]
     info = get_all_info_from_post(id)
     text = params["content"]
-    if session[:security] == 0 && user_id == info[0]["user_id"]
+    if  user_id == info[0]["user_id"]
         result = update_post(text, id)
         redirect("/")
-    elsif
+    elsif session[:security] == 0
         result = update_post(text, id)
         redirect("/")
     else
