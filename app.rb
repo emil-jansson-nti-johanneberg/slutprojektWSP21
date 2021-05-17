@@ -117,7 +117,6 @@ end
 #
 # @see Model#create_post
 post("/post/new_post") do
-
         title = params[:title]
         text = params[:text]
         genre = params[:genre]
@@ -194,24 +193,55 @@ end
 # Deletes an existing post and redirects to '/'
 #
 # @param [Integer] id, The ID of the post
+# @param [Integer] user_id, The ID of the user
+# @see Model#get_all_info_from_post
 #
 # @see Model#delete_post
 post("/delete_post/:id/delete") do 
     id = params[:id].to_i
-    result = delete_post(id)
-    redirect("/")
+    user_id = session[:id]
+    info = get_all_info_from_post(id)
+    if  user_id == info[0]["user_id"]
+        result = delete_post(id)
+        redirect("/")
+    elsif session[:security] == 0
+        result = delete_post(id)
+        redirect("/")
+    else
+        set_error("Du måste vara admin eller säljaren för att kunna ta bort inlägget")
+        redirect("/error")
+    end
 end
+
 # Updates an existing post and redirects to '/'
 #
 # @param [Integer] :id, The ID of the post
+# @param [Integer] user_id, The ID of the user
+# @see Model#get_all_info_from_post
+# @param [Array] info, All information from the post 
 # @param [String] content, The new content of the post
 #
 # @see Model#update_post
+<<<<<<< HEAD
 post("/update_post/:id/update") do 
     id = params[:id]
+=======
+post("/update_post/:id/update") do
+    id = params[:id].to_i
+    user_id = session[:id]
+    info = get_all_info_from_post(id)
+>>>>>>> e3991c72043b7e5522913fe65af651931c6c57a5
     text = params["content"]
-    result = update_post(text, id)
-    redirect("/")
+    if  user_id == info[0]["user_id"]
+        result = update_post(text, id)
+        redirect("/")
+    elsif session[:security] == 0
+        result = update_post(text, id)
+        redirect("/")
+    else
+        set_error("Du måste vara admin eller säljaren för att kunna ta uppdatera inlägget")
+        redirect("/error")
+    end
 end  
 #This route is used to logout and redirects to '/'
 get("/logout") do
