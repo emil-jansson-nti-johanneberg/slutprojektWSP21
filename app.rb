@@ -207,8 +207,8 @@ end
 # @param [String] content, The new content of the post
 #
 # @see Model#update_post
-post("/update_post/:id/update") do
-    id = params[:id].to_i
+post("/update_post/:id/update") do 
+    id = params[:id]
     text = params["content"]
     result = update_post(text, id)
     redirect("/")
