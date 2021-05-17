@@ -222,15 +222,10 @@ end
 # @param [String] content, The new content of the post
 #
 # @see Model#update_post
-<<<<<<< HEAD
-post("/update_post/:id/update") do 
-    id = params[:id]
-=======
 post("/update_post/:id/update") do
     id = params[:id].to_i
     user_id = session[:id]
     info = get_all_info_from_post(id)
->>>>>>> e3991c72043b7e5522913fe65af651931c6c57a5
     text = params["content"]
     if  user_id == info[0]["user_id"]
         result = update_post(text, id)
